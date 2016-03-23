@@ -3,7 +3,7 @@
 
 >**调用方法**：
 
-> - new Music([src], [loop], [auto], [icon])             //  新建一个音频对象
+> - new Music(src [, loop] [, auto] [, icon])             //  新建一个音频对象
 
 >**音频对象方法：**
 
@@ -24,4 +24,4 @@
 > - @loop {Boolean}       // 是否循环播放
 > - @auto {Boolean}       // 是否自动播放
 > - @icon {Boolean}       // 是否显示音乐图标
-> - @volume {Number}       // 音量大小 [0 - 1]
+> - @volume {Number}       // 音量大小 0至1
