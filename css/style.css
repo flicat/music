@@ -1,0 +1,40 @@
+/* icon-music */
+@-webkit-keyframes music {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform:         rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(-360deg);
+        transform:         rotate(-360deg);
+    }
+}
+@keyframes music {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform:         rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(-360deg);
+        transform:         rotate(-360deg);
+    }
+}
+
+.icon-music {
+    position: absolute;
+    right: 8.28125%;
+    top: 3.872889771598808%;
+    z-index: 12;
+    display: block;
+    width: 11.875%;
+    height: 0;
+    padding-bottom: 11.875%;
+    background: url(../images/icon-music.png) no-repeat 50% 50%;
+    background-size: 50% 50%;
+    -webkit-transform-origin: 50% 50%;
+    transform-origin:         50% 50%;
+}
+.icon-music-animation {
+    -webkit-animation: music 2s linear 0s infinite;
+    animation:         music 2s linear 0s infinite;
+}
