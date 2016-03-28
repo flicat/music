@@ -11,11 +11,10 @@
 > - Music.pause(),                    // 暂停音频
 > - Music.stop(),                     // 停止音频
 > - Music.volume([volume]),           // 获取/设置音量
-  
->**音频事件：**
+> - Music.addPlayEvent(handler),           // 添加播放音频（play）事件回调
+> - Music.addStopEvent(handler),           // 添加音频停止（pause）事件回调
+> - Music.addLoadEvent(handler),           // 添加音频加载完毕（canplay）事件回调
 
-> - Music.onPlay,                     // 播放音频触发事件
-> - Music.onStop,                     // 暂停/停止音频触发事件
 
             
 >**参数详解：**
@@ -25,3 +24,4 @@
 > - @auto {Boolean}       // 是否自动播放
 > - @icon {Boolean}       // 是否显示音乐图标
 > - @volume {Number}       // 音量大小 0至1
+> - @handler {Function}       // 事件触发回调函数
