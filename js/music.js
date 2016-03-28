@@ -23,16 +23,18 @@
         icon.className = 'icon-music';
         return icon;
     };
-
+    
     // 音乐播放对象
     var Music = function(src, loop, autoPlay, icon) {
         this.isPlay = false;
+        this.isReady = false;
         this.autoPlay = !!autoPlay;
 
         // 页面背景音乐
         this.audio = new Audio(src);
         this.audio.loop = !!loop;
         this.audio.autoplay = false;
+        this.audio.preload = 'auto';
 
         // 音乐播放图标
         this.icon = initMusicIcon();
@@ -43,25 +45,64 @@
         this.currentTime = Number(sessionStorage[this.timeStamp]) || 0;          // 上一次播放时间
         this.play_state = sessionStorage[this.stateStamp];                          // 上一次播放状态
 
+        this._playEventList = [];
+        this._stopEventList = [];
+        this._loadEventList = [];
+
         this.init();
     };
     Music.prototype = {
         constructor: Music,
-        onPlay: function() {},
-        onStop: function() {},
+
+        // 播放事件
+        _firePlayEvent: function() {
+            var that = this;
+            that._playEventList.forEach(function(handler) {
+                handler.call(that);
+            });
+        },
+        // 停止事件
+        _fireStopEvent: function() {
+            var that = this;
+            that._stopEventList.forEach(function(handler) {
+                handler.call(that);
+            });
+        },
+        // 加载事件
+        _fireLoadEvent: function() {
+            var that = this;
+            that._loadEventList.forEach(function(handler) {
+                handler.call(that);
+            });
+        },
+        addPlayEvent: function(handler) {
+            if(({}).toString.call(handler) === '[object Function]'){
+                this._playEventList.push(handler);
+            }
+        },
+        addStopEvent: function(handler) {
+            if(({}).toString.call(handler) === '[object Function]'){
+                this._stopEventList.push(handler);
+            }
+        },
+        addLoadEvent: function(handler) {
+            if(({}).toString.call(handler) === '[object Function]'){
+                this._loadEventList.push(handler);
+                if(this.isReady) {
+                    handler.call(this);
+                }
+            }
+        },
         // 播放
         play: function() {
-            this.isPlay = true;
             this.audio.play();
         },
         // 暂停
         pause: function() {
-            this.isPlay = false;
             this.audio.pause();
         },
         // 停止
         stop: function() {
-            this.isPlay = false;
             this.audio.pause();
             try {
                 this.audio.previousTime = 0;
@@ -70,13 +111,19 @@
         },
         // 修改播放图标
         setPlayState: function() {
-            this.icon.className = 'icon-music icon-music-animation';
-            this.onPlay();
+            if(!this.isPlay){
+                this.isPlay = true;
+                this.icon.className = 'icon-music icon-music-animation';
+                this._firePlayEvent();
+            }
         },
         // 修改播放图标
         setStopState: function() {
-            this.icon.className = 'icon-music';
-            this.onStop();
+            if(this.isPlay){
+                this.isPlay = false;
+                this.icon.className = 'icon-music';
+                this._fireStopEvent();
+            }
         },
         // 断点续播
         continuePlay: function() {
@@ -101,18 +148,28 @@
         init: function() {
             var that = this;
 
-            that.audio.addEventListener('playing', function() {
+            // 开始播放事件
+            that.audio.addEventListener('play', function(e) {
                 that.setPlayState();
-            }, false);      // 开始播放事件
-            that.audio.addEventListener('ended', function() {
+            }, false);
+            // 结束播放事件
+            that.audio.addEventListener('ended', function(e) {
                 that.setStopState();
-            }, false);        // 结束播放事件
-            that.audio.addEventListener('pause', function() {
+            }, false);
+            // 暂停事件
+            that.audio.addEventListener('pause', function(e) {
                 that.setStopState();
-            }, false);        // 暂停事件
-            that.audio.addEventListener('loadeddata', function() {
-                that.continuePlay();
-            }, false);        // 断点续播
+            }, false);
+            // 加载完毕事件
+            that.audio.addEventListener('canplay', function(e) {
+                if(!that.isReady){
+                    that.isReady = true;
+
+                    // 断点续播
+                    that.continuePlay();
+                    that._fireLoadEvent();
+                }
+            }, false);
 
             if((!that.play_state || that.play_state === 'play') && that.autoPlay){
                 that.play();
@@ -146,8 +203,6 @@
             });
         }
     };
-
-
 
     global.Music = Music;
 

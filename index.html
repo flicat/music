@@ -10,9 +10,28 @@
     <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
+<div id="state"></div>
+<script>
+    var state = document.getElementById('state');
+    var log = function(msg) {
+        state.innerHTML += msg + '<br>';
+    };
+</script>
 <script src="js/music.js"></script>
 <script>
-    new Music('audio/audio.mp3', true, true, true);
+    (function() {
+        var audio = new Music('audio/audio.mp3', true, true, true);
+
+        audio.addLoadEvent(function() {
+            log('loaded');
+        });
+        audio.addPlayEvent(function() {
+            log('play');
+        });
+        audio.addStopEvent(function() {
+            log('stop');
+        });
+    })()
 </script>
 </body>
 </html>
